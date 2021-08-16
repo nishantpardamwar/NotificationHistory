@@ -1,5 +1,8 @@
 package com.nishantpardamwar.notificationhistory
 
-enum class Action {
-    ENABLE_NOTIFICATION_ACCESS, FIRE_NOTIFICATION
+import com.nishantpardamwar.notificationhistory.models.Screen
+
+sealed class Action {
+    object NotificationAccessEnableAction : Action()
+    object FireTestNotificationAction : Action()
 }

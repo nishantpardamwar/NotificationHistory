@@ -5,8 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
 import com.nishantpardamwar.notificationhistory.ui.theme.NotificationHistoryTheme
 import android.text.TextUtils
 
@@ -33,8 +31,8 @@ class HomeActivity : ComponentActivity() {
                 Surface(color = MaterialTheme.colors.background) {
                     HomeScreen(vm) { action ->
                         when (action) {
-                            Action.ENABLE_NOTIFICATION_ACCESS -> startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
-                            Action.FIRE_NOTIFICATION -> fireNotification()
+                            is Action.NotificationAccessEnableAction -> startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+                            is Action.FireTestNotificationAction -> fireNotification()
                         }
                     }
                 }

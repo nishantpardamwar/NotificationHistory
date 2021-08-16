@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -50,13 +49,13 @@ fun NotificationAccessEnable(isNotificationAccessEnabled: Boolean, onAction: (Ac
         if (isNotificationAccessEnabled) {
             Text(text = "Notification Access Enabled")
             Button(onClick = {
-                onAction(Action.FIRE_NOTIFICATION)
+                onAction(Action.FireTestNotificationAction)
             }) {
                 Text(text = "Fire Test Notification")
             }
         } else {
             Button(onClick = {
-                onAction(Action.ENABLE_NOTIFICATION_ACCESS)
+                onAction(Action.NotificationAccessEnableAction)
             }) {
                 Text(text = "Enable Notification Access")
             }
