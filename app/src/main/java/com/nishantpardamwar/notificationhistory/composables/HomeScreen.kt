@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Button
 import androidx.compose.material.Divider
@@ -24,6 +25,9 @@ import com.nishantpardamwar.notificationhistory.database.entities.NotificationEn
 import com.nishantpardamwar.notificationhistory.getAppIcon
 import com.nishantpardamwar.notificationhistory.isNightMode
 import com.nishantpardamwar.notificationhistory.viewmodel.HomeViewModel
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshots.SnapshotStateMap
+import com.nishantpardamwar.notificationhistory.models.NotificationGroup
 
 @Composable
 fun HomeScreen(vm: HomeViewModel, onAction: (Action) -> Unit) {
@@ -65,13 +69,56 @@ fun NotificationAccessEnable(isNotificationAccessEnabled: Boolean, onAction: (Ac
 
 @Composable
 fun NotificationList(
-    list: List<NotificationEntity>, onDelete: (NotificationEntity) -> Unit
+    list: List<NotificationGroup>, onDelete: (NotificationEntity) -> Unit
 ) {
+    val expandCollapseMap = remember { mutableStateMapOf<String, Boolean>() }
     LazyColumn(Modifier.animateContentSize { initialValue, targetValue -> }) {
-        itemsIndexed(list) { index, item ->
-            NotificationItem(item, onDelete = onDelete)
-            Divider(Modifier.fillMaxWidth())
+        list.forEach { item ->
+            val appName = item.appName
+            item {
+                NotificationGroupItem(item, expandCollapseMap)
+                Divider(Modifier.fillMaxWidth())
+            }
+
+            if (expandCollapseMap[appName] == true) {
+                itemsIndexed(item.notificationList) { index, notificationItem ->
+                    NotificationItem(notificationItem, onDelete = onDelete)
+                    Divider(Modifier.fillMaxWidth())
+                }
+            }
         }
+    }
+}
+
+@Composable
+fun NotificationGroupItem(notificationGroup: NotificationGroup, expandCollapseMap: SnapshotStateMap<String, Boolean>) {
+    val context = LocalContext.current
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .clickable {
+                expandCollapseMap[notificationGroup.appName] = !expandCollapseMap.getOrDefault(notificationGroup.appName, false)
+            }) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row {
+                val icon = getAppIcon(context, notificationGroup.appPkg)
+                if (icon != null) {
+                    Image(
+                        modifier = Modifier.size(25.dp), bitmap = icon, contentDescription = ""
+                    )
+                }
+                Text(modifier = Modifier.padding(start = 10.dp), text = notificationGroup.appName)
+            }
+        }
+        val notificationCount =
+            "${notificationGroup.notificationCount} ${if (notificationGroup.notificationCount > 1) "Notification" else "Notifications"}"
+        Text(modifier = Modifier.padding(start = 10.dp, bottom = 10.dp), text = notificationCount)
     }
 }
 
@@ -85,22 +132,17 @@ fun NotificationItem(
             .fillMaxWidth()
             .padding(10.dp)
     ) {
-        Column(Modifier.fillMaxWidth()) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(start = 20.dp)
+        ) {
             Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row {
-                    val icon = getAppIcon(context, item.appPkg)
-                    if (icon != null) {
-                        Image(
-                            modifier = Modifier.size(25.dp), bitmap = icon, contentDescription = ""
-                        )
-                    }
-                    Text(modifier = Modifier.padding(start = 10.dp), text = item.appName)
-                }
-
+                Text(modifier = Modifier.padding(top = 5.dp), text = item.title, fontWeight = FontWeight.Bold)
                 if (item.isGroupConversation) {
                     if (isNightMode(context)) {
                         Image(painter = painterResource(id = R.drawable.ic_group), contentDescription = "")
@@ -114,7 +156,7 @@ fun NotificationItem(
                 }
             }
 
-            Text(modifier = Modifier.padding(top = 10.dp), text = item.title, fontWeight = FontWeight.Bold)
+
             if (item.content != null) {
                 Text(modifier = Modifier.padding(top = 10.dp), text = item.content)
             }
@@ -125,12 +167,10 @@ fun NotificationItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row {
-                    Text(modifier = Modifier.padding(top = 10.dp), text = item.displayCreatedAtDate())
                     Text(
-                        modifier = Modifier.padding(top = 10.dp, start = 10.dp),
-                        text = item.displayCreatedAtTime(),
-                        fontWeight = FontWeight.Bold
+                        modifier = Modifier.padding(top = 10.dp), text = item.displayCreatedAtTime(), fontWeight = FontWeight.Bold
                     )
+                    Text(modifier = Modifier.padding(top = 10.dp, start = 10.dp), text = item.displayCreatedAtDate())
                 }
 
                 Text(

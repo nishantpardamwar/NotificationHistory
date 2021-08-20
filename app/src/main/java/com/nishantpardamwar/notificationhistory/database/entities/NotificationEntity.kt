@@ -34,7 +34,7 @@ data class NotificationEntity(
 
     fun displayCreatedAtTime(): String {
         val date = Date(createdAt)
-        val format = SimpleDateFormat("hh:mm a", Locale.getDefault())
+        val format = SimpleDateFormat("EEE hh:mm a", Locale.getDefault())
         return format.format(date).uppercase()
     }
 }
