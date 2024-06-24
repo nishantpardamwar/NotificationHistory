@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import com.google.gson.JsonObject
+import kotlinx.serialization.json.JsonObject
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -13,7 +13,6 @@ data class NotificationEntity(
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "content") val content: String?,
     @ColumnInfo(name = "appPkg") val appPkg: String,
-    @ColumnInfo(name = "appName") val appName: String,
     @ColumnInfo(name = "extraJSON") val extraJSON: JsonObject,
 ) {
     @PrimaryKey(autoGenerate = true)
@@ -24,7 +23,7 @@ data class NotificationEntity(
     var createdAt = System.currentTimeMillis()
 
     @Ignore
-    val isGroupConversation = extraJSON.has("android.isGroupConversation")
+    val isGroupConversation = extraJSON.containsKey("android.isGroupConversation")
 
     fun displayCreatedAtDate(): String {
         val date = Date(createdAt)

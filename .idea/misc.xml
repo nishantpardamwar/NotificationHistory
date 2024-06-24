@@ -3,11 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/serio/AndroidStudioProjects/NotificationHistory/app/src/main/res/drawable/ic_bell.xml" value="0.1" />
         <entry key="..\:/Users/serio/AndroidStudioProjects/NotificationHistory/app/src/main/res/drawable/ic_group.xml" value="0.26461538461538464" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

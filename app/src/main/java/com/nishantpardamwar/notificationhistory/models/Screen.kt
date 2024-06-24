@@ -1,8 +1,12 @@
 package com.nishantpardamwar.notificationhistory.models
 
-import com.nishantpardamwar.notificationhistory.database.entities.NotificationEntity
+import kotlinx.serialization.Serializable
 
-sealed class Screen {
-    object Home : Screen()
-    class AppNotifications(val list: List<NotificationEntity>) : Screen()
+sealed interface Screens {
+    @Serializable
+    data object PermissionScreen : Screens
+
+    @Serializable
+    data object HomeScreen : Screens
 }
+
