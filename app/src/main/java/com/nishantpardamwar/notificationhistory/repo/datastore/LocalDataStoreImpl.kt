@@ -22,6 +22,15 @@ class LocalDataStoreImpl @Inject constructor(private val db: AppDatabase) : Loca
         ).flow
     }
 
+    override fun getNotificationListFor(appPkg: String): Flow<PagingData<NotificationEntity>> {
+        return Pager(
+            config = PagingConfig(pageSize = 20),
+            pagingSourceFactory = {
+                db.notificationDao().getNotificationFor(appPkg)
+            }
+        ).flow
+    }
+
     override suspend fun addNotification(appItem: AppEntity, entity: NotificationEntity) {
         db.appDao().upsert(appItem)
         db.notificationDao().insert(entity)

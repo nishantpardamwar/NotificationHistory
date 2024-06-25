@@ -1,5 +1,6 @@
 package com.nishantpardamwar.notificationhistory.ui.screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -28,22 +30,18 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.nishantpardamwar.notificationhistory.R
 import com.nishantpardamwar.notificationhistory.models.NotificationAppModel
-import com.nishantpardamwar.notificationhistory.viewmodel.HomeViewModel
+import com.nishantpardamwar.notificationhistory.viewmodel.MainVM
 
 @Composable
-fun NotificationAppsScreen() {
-    val vm = hiltViewModel<HomeViewModel>()
+fun NotificationAppsScreen(onItemClick: (NotificationAppModel) -> Unit) {
+    val vm = hiltViewModel<MainVM>()
     val apps = vm.getNotificationApps().collectAsLazyPagingItems()
 
     LazyColumn(Modifier.fillMaxSize()) {
-        items(
-            apps.itemCount,
-            key = apps.itemKey { it.appPkg }) { index: Int ->
+        items(apps.itemCount, key = apps.itemKey { it.appPkg }) { index: Int ->
             val item = apps[index]
             if (item != null) {
-                AppItemRow(item = item) {
-
-                }
+                AppItemRow(item = item, onItemClick = onItemClick)
             }
         }
     }
@@ -56,13 +54,13 @@ private fun AppItemRow(item: NotificationAppModel, onItemClick: (NotificationApp
             .clickable { onItemClick(item) }
             .fillMaxWidth()
             .padding(horizontal = 15.dp)
-            .height(56.dp),
-        Arrangement.SpaceBetween,
-        Alignment.CenterVertically) {
+            .height(56.dp), Arrangement.SpaceBetween, Alignment.CenterVertically) {
         Row(Modifier.wrapContentWidth()) {
             if (item.icon != null) {
-                Icon(
-                    modifier = Modifier.size(30.dp),
+                Image(
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clip(CircleShape),
                     bitmap = item.icon,
                     contentDescription = "App Icon"
                 )
@@ -71,8 +69,7 @@ private fun AppItemRow(item: NotificationAppModel, onItemClick: (NotificationApp
                     modifier = Modifier
                         .size(30.dp)
                         .background(
-                            color = colorResource(id = R.color.color_CDD0D3),
-                            shape = CircleShape
+                            color = colorResource(id = R.color.color_CDD0D3), shape = CircleShape
                         )
                 )
             }
@@ -80,7 +77,7 @@ private fun AppItemRow(item: NotificationAppModel, onItemClick: (NotificationApp
             Spacer(modifier = Modifier.padding(horizontal = 5.dp))
 
             Text(
-                text = item.title,
+                text = item.appName,
                 fontSize = 16.sp,
                 color = colorResource(id = R.color.color_0078E7)
             )

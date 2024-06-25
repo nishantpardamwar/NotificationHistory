@@ -7,6 +7,8 @@ import com.nishantpardamwar.notificationhistory.repo.Repo
 import com.nishantpardamwar.notificationhistory.repo.RepoImpl
 import com.nishantpardamwar.notificationhistory.repo.datastore.LocalDataStore
 import com.nishantpardamwar.notificationhistory.repo.datastore.LocalDataStoreImpl
+import com.nishantpardamwar.notificationhistory.utility.UtilityManager
+import com.nishantpardamwar.notificationhistory.utility.UtilityManagerImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,7 +22,8 @@ class AppModule {
     @Singleton
     @Provides
     fun provideDatabase(@ApplicationContext context: Context) =
-        Room.databaseBuilder(context, AppDatabase::class.java, "appdb").fallbackToDestructiveMigration().allowMainThreadQueries()
+        Room.databaseBuilder(context, AppDatabase::class.java, "appdb")
+            .fallbackToDestructiveMigration().allowMainThreadQueries()
             .build()
 
     @Singleton
@@ -33,5 +36,11 @@ class AppModule {
     @Provides
     fun provideRepo(localDataStore: LocalDataStore): Repo {
         return RepoImpl(localDataStore)
+    }
+
+    @Singleton
+    @Provides
+    fun provideUtility(@ApplicationContext context: Context): UtilityManager {
+        return UtilityManagerImpl(context)
     }
 }

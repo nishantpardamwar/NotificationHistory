@@ -7,12 +7,12 @@ import com.nishantpardamwar.notificationhistory.ui.theme.NotificationHistoryThem
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import com.nishantpardamwar.notificationhistory.ui.screen.NavScreen
-import com.nishantpardamwar.notificationhistory.viewmodel.HomeViewModel
+import com.nishantpardamwar.notificationhistory.viewmodel.MainVM
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class HomeActivity : ComponentActivity() {
-    private val vm: HomeViewModel by viewModels()
+    private val vm: MainVM by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

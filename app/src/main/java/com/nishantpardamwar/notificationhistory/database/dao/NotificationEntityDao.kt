@@ -1,5 +1,6 @@
 package com.nishantpardamwar.notificationhistory.database.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -8,6 +9,9 @@ import com.nishantpardamwar.notificationhistory.database.entities.NotificationEn
 
 @Dao
 interface NotificationEntityDao {
+
+    @Query("SELECT * FROM NotificationEntity WHERE appPkg = :appPkg")
+    fun getNotificationFor(appPkg: String): PagingSource<Int, NotificationEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: NotificationEntity)

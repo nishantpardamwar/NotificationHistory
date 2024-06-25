@@ -16,6 +16,10 @@ class RepoImpl @Inject constructor(private val localDataStore: LocalDataStore) :
         return localDataStore.getNotificationApps()
     }
 
+    override fun getNotificationListFor(appPkg: String): Flow<PagingData<NotificationEntity>> {
+        return localDataStore.getNotificationListFor(appPkg)
+    }
+
     override suspend fun addNotification(
         title: String, content: String?, pkg: String, appName: String, bundle: Bundle
     ) {

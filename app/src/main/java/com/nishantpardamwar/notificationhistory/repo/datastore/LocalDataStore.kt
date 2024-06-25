@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocalDataStore {
     fun getNotificationApps(): Flow<PagingData<AppEntity>>
+    fun getNotificationListFor(appPkg: String): Flow<PagingData<NotificationEntity>>
     suspend fun addNotification(appItem: AppEntity, entity: NotificationEntity)
     suspend fun deleteNotification(id: Long)
 }

@@ -14,6 +14,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.nishantpardamwar.notificationhistory.isNotificationServiceEnabled
 import com.nishantpardamwar.notificationhistory.models.Screens
 
@@ -51,7 +52,17 @@ fun NavScreen() {
             })
         }
         composable<Screens.HomeScreen> {
-            NotificationAppsScreen()
+            NotificationAppsScreen(onItemClick = { app ->
+                navController.navigate(
+                    Screens.NotificationListScreen(
+                        appName = app.appName, appPkg = app.appPkg
+                    )
+                )
+            })
+        }
+        composable<Screens.NotificationListScreen> {
+            val data = it.toRoute<Screens.NotificationListScreen>()
+            NotificationListScreen(data.appName, data.appPkg)
         }
     }
 }
