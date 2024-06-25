@@ -1,6 +1,8 @@
 package com.nishantpardamwar.notificationhistory.ui.screen
 
 import android.content.Intent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -42,10 +44,28 @@ fun NavScreen() {
         }
     }
 
-    NavHost(
-        navController = navController,
-        startDestination = if (hasNotificationAccess) Screens.HomeScreen else Screens.PermissionScreen
-    ) {
+    NavHost(navController = navController,
+        startDestination = if (hasNotificationAccess) Screens.HomeScreen else Screens.PermissionScreen,
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Start, tween(400)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Start, tween(400)
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.End, tween(400)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.End, tween(400)
+            )
+        }) {
         composable<Screens.PermissionScreen> {
             NotificationAccessScreen(onAllowClick = {
                 context.startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))

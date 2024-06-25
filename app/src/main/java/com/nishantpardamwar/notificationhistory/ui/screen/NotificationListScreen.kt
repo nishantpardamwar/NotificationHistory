@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,10 +25,14 @@ import com.nishantpardamwar.notificationhistory.viewmodel.MainVM
 @Composable
 fun NotificationListScreen(appName: String, appPkg: String) {
     val vm = hiltViewModel<MainVM>()
-    val notifications = vm.getNotificationListFor(appPkg).collectAsLazyPagingItems()
+    val notifications = vm.notificationFlow.collectAsLazyPagingItems()
+
+    LaunchedEffect(Unit) {
+        vm.loadNotificationFor(appPkg)
+    }
 
     Column(Modifier.fillMaxSize()) {
-        LazyColumn(Modifier.fillMaxSize()) {
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(notifications.itemCount, key = notifications.itemKey { it.id }) { index ->
                 val notification = notifications[index]
                 if (notification != null) {
@@ -42,8 +47,7 @@ fun NotificationListScreen(appName: String, appPkg: String) {
 
 @Composable
 private fun NotificationItem(
-    notification: NotificationItemModel,
-    onDelete: (NotificationItemModel) -> Unit
+    notification: NotificationItemModel, onDelete: (NotificationItemModel) -> Unit
 ) {
     Row(
         Modifier

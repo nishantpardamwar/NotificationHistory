@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -36,9 +35,9 @@ import com.nishantpardamwar.notificationhistory.viewmodel.MainVM
 @Composable
 fun NotificationAppsScreen(onItemClick: (NotificationAppModel) -> Unit) {
     val vm = hiltViewModel<MainVM>()
-    val apps = vm.getNotificationApps().collectAsLazyPagingItems()
+    val apps = vm.appsFlow.collectAsLazyPagingItems()
 
-    LazyColumn(Modifier.fillMaxSize()) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(apps.itemCount, key = apps.itemKey { it.appPkg }) { index: Int ->
             val item = apps[index]
             if (item != null) {
@@ -56,7 +55,10 @@ private fun AppItemRow(item: NotificationAppModel, onItemClick: (NotificationApp
             .fillMaxWidth()
             .padding(horizontal = 15.dp)
             .height(56.dp), Arrangement.SpaceBetween, Alignment.CenterVertically) {
-        Row(Modifier.wrapContentWidth()) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .weight(.4f)) {
             if (item.icon != null) {
                 Image(
                     modifier = Modifier
@@ -95,7 +97,7 @@ private fun AppItemRow(item: NotificationAppModel, onItemClick: (NotificationApp
             Box(
                 modifier = Modifier
                     .padding(bottom = 3.5.dp)
-                    .size(20.dp)
+                    .size(width = 30.dp, height = 20.dp)
             ) {
                 Text(
                     modifier = Modifier.fillMaxSize(),
