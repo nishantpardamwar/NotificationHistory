@@ -41,6 +41,7 @@ import com.nishantpardamwar.notificationhistory.R
 import com.nishantpardamwar.notificationhistory.icons.FilterIcon
 import com.nishantpardamwar.notificationhistory.models.AppItem
 import com.nishantpardamwar.notificationhistory.toImageBitmap
+import com.nishantpardamwar.notificationhistory.ui.SearchBox
 import com.nishantpardamwar.notificationhistory.viewmodel.AppSelectionSettingsVM
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,24 +50,36 @@ fun AppListSelectionScreen() {
     val vm = hiltViewModel<AppSelectionSettingsVM>()
     val isLoading by vm.isLoadingFlow.collectAsStateWithLifecycle()
     val appList by vm.appsFlow.collectAsStateWithLifecycle()
+    val searchList by vm.searchFlow.collectAsStateWithLifecycle()
+
+    var searchQuery by remember { mutableStateOf("") }
 
     Scaffold(Modifier.fillMaxSize(), topBar = {
-        TopAppBar(title = {
-            Text(
-                modifier = Modifier,
-                text = "Filter Apps",
-                fontSize = 20.sp,
-                color = MaterialTheme.colorScheme.secondary,
-                fontWeight = FontWeight.Bold
-            )
-        }, navigationIcon = {
-            Icon(
-                modifier = Modifier.padding(horizontal = 10.dp),
-                imageVector = FilterIcon,
-                contentDescription = "",
-                tint = MaterialTheme.colorScheme.secondary
-            )
-        })
+        Column(Modifier.fillMaxWidth()) {
+            TopAppBar(title = {
+                Text(
+                    modifier = Modifier,
+                    text = "Filter Apps",
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontWeight = FontWeight.Bold
+                )
+            }, navigationIcon = {
+                Icon(
+                    modifier = Modifier.padding(horizontal = 10.dp),
+                    imageVector = FilterIcon,
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.secondary
+                )
+            })
+            SearchBox(modifier = Modifier.padding(horizontal = 16.dp),
+                hint = "Search Apps",
+                onSearch = { query ->
+                    searchQuery = query
+                    vm.searchApps(query)
+                })
+            Spacer(modifier = Modifier.height(10.dp))
+        }
     }, content = { paddingValues ->
         Box(
             modifier = Modifier
@@ -79,7 +92,11 @@ fun AppListSelectionScreen() {
                     color = MaterialTheme.colorScheme.secondary
                 )
             } else {
-                AppList(appList = appList, onSwitch = { enable, appPkg ->
+                AppList(appList = if (searchQuery.isBlank()) {
+                    appList
+                } else {
+                    searchList
+                }, onSwitch = { enable, appPkg ->
                     vm.toggleDisableApp(enable, appPkg)
                 })
             }
@@ -114,11 +131,9 @@ private fun AppItemComposable(item: AppItem, onSwitch: (Boolean, String) -> Unit
             Text(text = item.appName)
             Text(text = item.appPkg, fontSize = 12.sp)
         }
-        Switch(
-            modifier = Modifier.scale(.7f), checked = item.enabled, onCheckedChange = {
-                onSwitch(it, item.appPkg)
-            }
-        )
+        Switch(modifier = Modifier.scale(.7f), checked = item.enabled, onCheckedChange = {
+            onSwitch(it, item.appPkg)
+        })
     }
 }
 
