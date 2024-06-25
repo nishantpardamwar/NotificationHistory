@@ -11,4 +11,7 @@ interface LocalDataStore {
     fun getNotificationListFor(appPkg: String): Flow<PagingData<NotificationEntity>>
     suspend fun addNotification(appItem: AppEntity, entity: NotificationEntity)
     suspend fun deleteNotification(id: Long)
+    fun getDisabledApps(): Flow<List<String>>
+    suspend fun toggleAppDisable(enable: Boolean, appPkg: String)
+    suspend fun isDisabledApp(appPkg: String): Boolean
 }

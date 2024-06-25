@@ -10,7 +10,7 @@ import com.nishantpardamwar.notificationhistory.database.entities.NotificationEn
 @Dao
 interface NotificationEntityDao {
 
-    @Query("SELECT * FROM NotificationEntity WHERE appPkg = :appPkg")
+    @Query("SELECT * FROM NotificationEntity WHERE appPkg = :appPkg ORDER BY createdAt DESC")
     fun getNotificationFor(appPkg: String): PagingSource<Int, NotificationEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

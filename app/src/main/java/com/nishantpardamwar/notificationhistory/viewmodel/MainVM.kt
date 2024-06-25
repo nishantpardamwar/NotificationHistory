@@ -51,8 +51,7 @@ class MainVM @Inject constructor(
                         id = notification.id,
                         title = notification.title,
                         content = notification.content,
-                        displayCreatedAtDate = notification.displayCreatedAtDate(),
-                        displayCreatedAtTime = notification.displayCreatedAtTime()
+                        displayDateTime = notification.displayCreatedAtDate() + " " + notification.displayCreatedAtTime()
                     )
                 }
             }.collectLatest {

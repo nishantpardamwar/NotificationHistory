@@ -26,7 +26,7 @@ fun NavScreen() {
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current
 
-    var hasNotificationAccess by remember { mutableStateOf(true) }
+    var hasNotificationAccess by remember { mutableStateOf(context.isNotificationServiceEnabled()) }
 
     DisposableEffect(lifecycle) {
         val observer = LifecycleEventObserver { source, event ->
@@ -78,11 +78,21 @@ fun NavScreen() {
                         appName = app.appName, appPkg = app.appPkg
                     )
                 )
+            }, onSettingClick = {
+                navController.navigate(Screens.Settings)
             })
         }
         composable<Screens.NotificationListScreen> {
             val data = it.toRoute<Screens.NotificationListScreen>()
             NotificationListScreen(data.appName, data.appPkg)
+        }
+        composable<Screens.Settings> {
+            SettingsScreen(onFilterAppSettingClick = {
+                navController.navigate(Screens.SettingAppListSelection)
+            })
+        }
+        composable<Screens.SettingAppListSelection> {
+            AppListSelectionScreen()
         }
     }
 }

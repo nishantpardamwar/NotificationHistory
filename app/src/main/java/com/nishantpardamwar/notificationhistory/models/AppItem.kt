@@ -5,5 +5,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 
 @Immutable
 data class AppItem(
-    val title: String, val icon: ImageBitmap?, val lastDate: String
+    val appName: String,
+    val appPkg: String,
+    val icon: ImageBitmap,
+    val enabled: Boolean
 )

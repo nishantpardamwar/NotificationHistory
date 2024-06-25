@@ -19,4 +19,8 @@ interface Repo {
     )
 
     suspend fun deleteNotification(id: Long)
+
+    fun getDisabledApps(): Flow<List<String>>
+    suspend fun toggleAppDisable(enable: Boolean, appPkg: String)
+    suspend fun isDisabledApp(appPkg: String): Boolean
 }

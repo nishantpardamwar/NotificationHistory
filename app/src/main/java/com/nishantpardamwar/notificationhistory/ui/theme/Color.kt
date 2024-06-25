@@ -1,4 +1,4 @@
-package com.nishantpardamwar.processedfoodanalyzer.ui.theme
+package com.nishantpardamwar.notificationhistory.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

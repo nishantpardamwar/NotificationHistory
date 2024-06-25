@@ -4,8 +4,9 @@ import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import com.nishantpardamwar.notificationhistory.database.entities.NotificationEntity
+import android.util.Log
 import com.nishantpardamwar.notificationhistory.repo.Repo
+import com.nishantpardamwar.notificationhistory.stringOrNull
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,49 +25,51 @@ class NotificationListener : NotificationListenerService() {
 
     override fun onCreate() {
         super.onCreate()
-        println("why NotificationListener onCreate")
+        Log.d(TAG, "onCreate")
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
-        println("why NotificationListener onNotificationPosted $sbn")
+        Log.d(TAG, "onNotificationPosted $sbn")
         val pkg = sbn?.packageName
         val extra = sbn?.notification?.extras
         if (extra != null) {
-            val title = extra.getString(NOTIFICATION_TITLE)
-            val content = extra.getString(NOTIFICATION_CONTENT)
-            val appName = (extra.get(NOTIFICATION_APP_INFO) as? ApplicationInfo)?.loadLabel(packageManager)?.toString()
+            val title = extra.getString(NOTIFICATION_TITLE)?.stringOrNull()
+            val content = extra.getString(NOTIFICATION_CONTENT)?.stringOrNull()
+            val appName =
+                (extra.get(NOTIFICATION_APP_INFO) as? ApplicationInfo)?.loadLabel(packageManager)
+                    ?.toString()?.stringOrNull()
 
             if (pkg != null && title != null && appName != null) {
                 scope.launch {
-                    repo.addNotification(title, content, pkg, appName, extra)
+                    if (repo.isDisabledApp(pkg)) {
+                        Log.d(TAG, "Disabled App $pkg")
+                    } else {
+                        repo.addNotification(title, content, pkg, appName, extra)
+                    }
                 }
             }
-        }
-        sbn?.notification?.extras?.keySet()?.forEach {
-            println("why NotificationListener onNotificationPosted key $it, value ${sbn.notification?.extras?.get(it)}")
         }
     }
 
     override fun onListenerConnected() {
-        println("why NotificationListener onListenerConnected")
+        Log.d(TAG, "onListenerConnected")
     }
 
     override fun onListenerDisconnected() {
-        println("why NotificationListener onListenerDisconnected")
+        Log.d(TAG, "onListenerDisconnected")
     }
 
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
-        println("why NotificationListener onDestroy")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        println("why NotificationListener onStartCommand")
         return START_STICKY
     }
 
     companion object {
+        private const val TAG = "NotifListener"
         private const val NOTIFICATION_TITLE = "android.title"
         private const val NOTIFICATION_CONTENT = "android.text"
         private const val NOTIFICATION_APP_INFO = "android.appInfo"

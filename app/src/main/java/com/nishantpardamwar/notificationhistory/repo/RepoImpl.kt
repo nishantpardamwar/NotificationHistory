@@ -43,4 +43,16 @@ class RepoImpl @Inject constructor(private val localDataStore: LocalDataStore) :
     override suspend fun deleteNotification(id: Long) {
         localDataStore.deleteNotification(id)
     }
+
+    override fun getDisabledApps(): Flow<List<String>> {
+        return localDataStore.getDisabledApps()
+    }
+
+    override suspend fun toggleAppDisable(enable: Boolean, appPkg: String) {
+        return localDataStore.toggleAppDisable(enable, appPkg)
+    }
+
+    override suspend fun isDisabledApp(appPkg: String): Boolean {
+        return localDataStore.isDisabledApp(appPkg)
+    }
 }

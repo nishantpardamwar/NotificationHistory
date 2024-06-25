@@ -1,6 +1,5 @@
 package com.nishantpardamwar.notificationhistory.models
 
-import androidx.compose.ui.graphics.ImageBitmap
 import kotlinx.serialization.Serializable
 
 sealed interface Screens {
@@ -14,5 +13,11 @@ sealed interface Screens {
     data class NotificationListScreen(
         val appName: String, val appPkg: String
     ) : Screens
+
+    @Serializable
+    data object Settings : Screens
+
+    @Serializable
+    data object SettingAppListSelection : Screens
 }
 
