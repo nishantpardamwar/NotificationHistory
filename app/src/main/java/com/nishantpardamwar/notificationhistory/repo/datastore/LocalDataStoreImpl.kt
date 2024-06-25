@@ -6,14 +6,14 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.nishantpardamwar.notificationhistory.database.AppDatabase
 import com.nishantpardamwar.notificationhistory.database.entities.AppEntity
-import com.nishantpardamwar.notificationhistory.database.entities.AppWithNotifications
 import com.nishantpardamwar.notificationhistory.database.entities.NotificationEntity
+import com.nishantpardamwar.notificationhistory.models.AppsWithNotificationCount
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class LocalDataStoreImpl @Inject constructor(private val db: AppDatabase) : LocalDataStore {
 
-    override fun getNotificationApps(): Flow<PagingData<AppEntity>> {
+    override fun getNotificationApps(): Flow<PagingData<AppsWithNotificationCount>> {
         return Pager(
             config = PagingConfig(pageSize = 20),
             pagingSourceFactory = {

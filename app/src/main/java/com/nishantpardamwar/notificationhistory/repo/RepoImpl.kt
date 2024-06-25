@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.paging.PagingData
 import com.nishantpardamwar.notificationhistory.database.entities.AppEntity
 import com.nishantpardamwar.notificationhistory.database.entities.NotificationEntity
+import com.nishantpardamwar.notificationhistory.models.AppsWithNotificationCount
 import com.nishantpardamwar.notificationhistory.repo.datastore.LocalDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.json.JsonElement
@@ -12,7 +13,7 @@ import kotlinx.serialization.json.JsonPrimitive
 import javax.inject.Inject
 
 class RepoImpl @Inject constructor(private val localDataStore: LocalDataStore) : Repo {
-    override fun getNotificationApps(): Flow<PagingData<AppEntity>> {
+    override fun getNotificationApps(): Flow<PagingData<AppsWithNotificationCount>> {
         return localDataStore.getNotificationApps()
     }
 

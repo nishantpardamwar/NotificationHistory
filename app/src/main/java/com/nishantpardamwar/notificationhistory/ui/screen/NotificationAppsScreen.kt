@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -90,11 +91,25 @@ private fun AppItemRow(item: NotificationAppModel, onItemClick: (NotificationApp
                 color = colorResource(id = R.color.color_0078E7)
             )
         }
-        Icon(
-            modifier = Modifier.size(10.dp),
-            painter = painterResource(id = R.drawable.ic_chevron),
-            contentDescription = "",
-            tint = colorResource(id = R.color.color_0078E7)
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .padding(bottom = 3.5.dp)
+                    .size(20.dp)
+            ) {
+                Text(
+                    modifier = Modifier.fillMaxSize(),
+                    text = item.displayNotificationCount,
+                    textAlign = TextAlign.Center,
+                    fontSize = 12.sp
+                )
+            }
+            Icon(
+                modifier = Modifier.size(10.dp),
+                painter = painterResource(id = R.drawable.ic_chevron),
+                contentDescription = "",
+                tint = colorResource(id = R.color.color_0078E7)
+            )
+        }
     }
 }

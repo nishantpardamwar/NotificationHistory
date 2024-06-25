@@ -3,6 +3,7 @@ package com.nishantpardamwar.notificationhistory.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import androidx.paging.map
 import com.nishantpardamwar.notificationhistory.models.NotificationAppModel
 import com.nishantpardamwar.notificationhistory.models.NotificationItemModel
@@ -25,11 +26,16 @@ class MainVM @Inject constructor(
                 NotificationAppModel(
                     appName = app.appName,
                     appPkg = app.appPkg,
+                    displayNotificationCount = if (app.notificationCount > 99) {
+                        "99+"
+                    } else {
+                        app.notificationCount.toString()
+                    },
                     icon = utility.getAppIcon(app.appPkg),
-                    lastDate = "No Idea"
+                    lastDate = app.displayDate()
                 )
             }
-        }
+        }.cachedIn(viewModelScope)
     }
 
     fun getNotificationListFor(
@@ -45,7 +51,7 @@ class MainVM @Inject constructor(
                     displayCreatedAtTime = notification.displayCreatedAtTime()
                 )
             }
-        }
+        }.cachedIn(viewModelScope)
     }
 
     fun deleteNotification(id: Long) {
