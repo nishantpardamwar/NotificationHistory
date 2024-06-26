@@ -5,9 +5,10 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.drawable.toBitmapOrNull
+import com.nishantpardamwar.notificationhistory.di.IoDispatcher
 import com.nishantpardamwar.notificationhistory.models.AppItem
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -17,7 +18,8 @@ interface UtilityManager {
 }
 
 class UtilityManagerImpl @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : UtilityManager {
     override suspend fun getAppIcon(appPkg: String): ImageBitmap? {
         return runCatching {
@@ -25,7 +27,7 @@ class UtilityManagerImpl @Inject constructor(
         }.getOrNull()
     }
 
-    override suspend fun getAppList() = withContext(Dispatchers.IO) {
+    override suspend fun getAppList() = withContext(ioDispatcher) {
         val installedPackages = context.packageManager.getInstalledPackages(0)
         installedPackages.map {
             AppItem(

@@ -14,6 +14,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
 @Module
@@ -40,7 +41,10 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideUtility(@ApplicationContext context: Context): UtilityManager {
-        return UtilityManagerImpl(context)
+    fun provideUtility(
+        @ApplicationContext context: Context,
+        @IoDispatcher ioDispatcher: CoroutineDispatcher
+    ): UtilityManager {
+        return UtilityManagerImpl(context, ioDispatcher)
     }
 }

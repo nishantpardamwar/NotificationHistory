@@ -2,12 +2,14 @@ package com.nishantpardamwar.notificationhistory.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nishantpardamwar.notificationhistory.di.DefaultDispatcher
+import com.nishantpardamwar.notificationhistory.di.IoDispatcher
 import com.nishantpardamwar.notificationhistory.models.AppItem
 import com.nishantpardamwar.notificationhistory.repo.Repo
 import com.nishantpardamwar.notificationhistory.utility.UtilityManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +20,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AppSelectionSettingsVM @Inject constructor(
-    private val repo: Repo, private val utilityManager: UtilityManager
+    private val repo: Repo,
+    private val utilityManager: UtilityManager,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private var originalAppListDeferred: Deferred<List<AppItem>>? = null
 
@@ -32,7 +37,7 @@ class AppSelectionSettingsVM @Inject constructor(
     val isLoadingFlow = isLoadingMutableState.asStateFlow()
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             isLoadingMutableState.emit(true)
             originalAppListDeferred = async { utilityManager.getAppList() }
             val appList = originalAppListDeferred?.await() ?: emptyList()
@@ -55,11 +60,13 @@ class AppSelectionSettingsVM @Inject constructor(
     private var searchJob: Job? = null
     fun searchApps(query: String) {
         searchJob?.cancel()
-        searchJob = viewModelScope.launch {
+        searchJob = viewModelScope.launch(defaultDispatcher) {
             repo.getDisabledApps().collectLatest { disabledApps ->
                 val lowerCaseQuery = query.lowercase()
                 val finalList = originalAppListDeferred?.await()?.filter {
-                    it.appName.lowercase().contains(lowerCaseQuery) || it.appPkg.contains(lowerCaseQuery)
+                    it.appName.lowercase().contains(lowerCaseQuery) || it.appPkg.contains(
+                        lowerCaseQuery
+                    )
                 }?.map {
                     it.copy(enabled = !disabledApps.contains(it.appPkg))
                 } ?: emptyList()

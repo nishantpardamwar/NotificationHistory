@@ -50,8 +50,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.nishantpardamwar.notificationhistory.models.NotificationItemModel
 import com.nishantpardamwar.notificationhistory.viewmodel.MainVM
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,10 +64,8 @@ fun NotificationListScreen(appName: String, appPkg: String) {
     }
 
     LaunchedEffect(Unit) {
-        launch(Dispatchers.IO) {
-            appIcon =
-                context.packageManager.getApplicationIcon(appPkg).toBitmapOrNull()?.asImageBitmap()
-        }
+        appIcon =
+            context.packageManager.getApplicationIcon(appPkg).toBitmapOrNull()?.asImageBitmap()
     }
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()

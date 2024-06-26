@@ -5,11 +5,12 @@ import android.content.pm.ApplicationInfo
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
+import com.nishantpardamwar.notificationhistory.di.IoDispatcher
 import com.nishantpardamwar.notificationhistory.repo.Repo
 import com.nishantpardamwar.notificationhistory.stringOrNull
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,11 +21,16 @@ class NotificationListener : NotificationListenerService() {
     @Inject
     lateinit var repo: Repo
 
+    @Inject
+    @IoDispatcher
+    lateinit var ioDispatcher: CoroutineDispatcher
+
     private val job = SupervisorJob()
-    private val scope = CoroutineScope(Dispatchers.IO + job)
+    private lateinit var scope: CoroutineScope
 
     override fun onCreate() {
         super.onCreate()
+        scope = CoroutineScope(ioDispatcher + job)
         Log.d(TAG, "onCreate")
     }
 
