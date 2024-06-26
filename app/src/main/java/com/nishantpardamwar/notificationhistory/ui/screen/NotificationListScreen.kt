@@ -38,11 +38,13 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmapOrNull
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
@@ -106,14 +108,29 @@ fun NotificationListScreen(appName: String, appPkg: String) {
                 }
             }, scrollBehavior = scrollBehavior)
         }, content = { paddingValues ->
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                NotificationList(notifications = notifications, onDelete = { id ->
-                    vm.deleteNotification(id)
-                })
+            if (notifications.itemCount == 0 && notifications.loadState.refresh is LoadState.NotLoading) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 60.dp),
+                        text = "No Recent Notifications",
+                        fontSize = 20.sp,
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            } else {
+                Column(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                ) {
+                    NotificationList(notifications = notifications, onDelete = { id ->
+                        vm.deleteNotification(id)
+                    })
+                }
             }
         })
 }

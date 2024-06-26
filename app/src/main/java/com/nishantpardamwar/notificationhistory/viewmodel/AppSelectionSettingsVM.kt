@@ -53,12 +53,13 @@ class AppSelectionSettingsVM @Inject constructor(
     }
 
     private var searchJob: Job? = null
-    fun searchApps(searchQuery: String) {
+    fun searchApps(query: String) {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
             repo.getDisabledApps().collectLatest { disabledApps ->
+                val lowerCaseQuery = query.lowercase()
                 val finalList = originalAppListDeferred?.await()?.filter {
-                    it.appName.contains(searchQuery) || it.appPkg.contains(searchQuery)
+                    it.appName.lowercase().contains(lowerCaseQuery) || it.appPkg.contains(lowerCaseQuery)
                 }?.map {
                     it.copy(enabled = !disabledApps.contains(it.appPkg))
                 } ?: emptyList()

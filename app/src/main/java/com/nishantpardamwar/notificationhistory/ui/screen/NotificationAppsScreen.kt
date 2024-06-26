@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.nishantpardamwar.notificationhistory.R
@@ -74,13 +75,13 @@ fun NotificationAppsScreen(
             )
         })
     }, content = { paddingValues ->
-        if (apps.itemCount == 0) {
+        if (apps.itemCount == 0 && apps.loadState.refresh is LoadState.NotLoading) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 60.dp),
-                    text = "Nothing to show\nAny new notification will start appearing here.",
+                    text = "No Recent Notifications",
                     fontSize = 20.sp,
                     color = MaterialTheme.colorScheme.secondary,
                     fontWeight = FontWeight.Bold,
